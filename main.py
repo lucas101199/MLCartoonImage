@@ -36,11 +36,7 @@ def create_new_filename(filename):
     return '.' + file_split[1] + "_cartoon." + file_split[2]
 
 
-if os.path.isfile(sys.argv[1]):
-    original_filename = sys.argv[1]
-
-    img = read_file(original_filename)
-
+def CartoonImage(img):
     line_size = 7
     blur_value = 7
     edges = edge_mask(img, line_size, blur_value)
@@ -54,25 +50,20 @@ if os.path.isfile(sys.argv[1]):
     new_file = create_new_filename(original_filename)
     cv2.imwrite(new_file, cartoon)
 
+
+if os.path.isfile(sys.argv[1]):
+    original_filename = sys.argv[1]
+
+    img = read_file(original_filename)
+    CartoonImage(img)
+
 elif os.path.isdir(sys.argv[1]):
     for file in os.listdir(sys.argv[1]):
 
         original_filename = os.path.join(sys.argv[1], file)
 
         img = read_file(original_filename)
-
-        line_size = 7
-        blur_value = 7
-        edges = edge_mask(img, line_size, blur_value)
-
-        total_color = 9
-        img = color_quantization(img, total_color)
-
-        blurred = cv2.bilateralFilter(img, d=7, sigmaColor=200, sigmaSpace=200)
-        cartoon = cv2.bitwise_and(blurred, blurred, mask=edges)
-
-        new_file = create_new_filename(original_filename)
-        cv2.imwrite(new_file, cartoon)
+        CartoonImage(img)
 
 else:
     print("file or directory not found")
